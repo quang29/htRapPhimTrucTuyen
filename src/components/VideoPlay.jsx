@@ -1,8 +1,23 @@
 import React from 'react'
+import { FaDoorClosed } from "react-icons/fa";
+import useFetchDetails from '../hooks/useFetchDetails'
 
-function Videoplay() {
+const Videoplay = ({data, close, media_type}) => {
+  const { data : videoData } = useFetchDetails(`/${media_type}/${data?.id}}/videos`)
   return (
     <section className='fixed bg-neutral-700/50 top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center'>
+      <div className='bg-black w-full max-h-[80vh] max-w-screen-lg aspect-video rounded relative'>
+        <button onClick={close} className='absolute top-4 right-4 text-3xl cursor-pointer z-50'>
+          <FaDoorClosed/>
+        </button>
+
+        <iframe 
+          src={`https://www.youtube.com/embed/${videoData?.results[0]?.key}`}
+          className='w-full h-full rounded'
+          frameborder="0"
+        />
+        
+      </div>
 
     </section>
   )

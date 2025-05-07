@@ -18,11 +18,16 @@ const DetailsPage = () => {
   const {data : similarData} = useFetch(`/${params?.explore}/${params?.id}/similar`)
   const {data : recomendationData} = useFetch(`/${params?.explore}/${params?.id}/recommendations`)
   const [playVideo, setPlayVideo] = useState(false)
-  const [playvideoId, setplayVideoId] = useState("")
+  const [playvideoId, setPlayVideoId] = useState("")
   // const [videoData, setVideoData] = useState(null)
 
   console.log(data)
   console.log(castData)
+
+  const handlePlayVideo = (data) => {
+    setPlayVideoId(data)
+    setPlayVideo(true)
+  }
 
   if (!data) {
     return <Loading />; 
@@ -50,7 +55,11 @@ const DetailsPage = () => {
                 alt="banner" 
                 className='h-80 w-60 object-cover rounded' 
           />
-          <button className='mt-3 w-full py-2 px-4 text-center bg-white text-black rounded font-bold text-lg hover:bg-gradient-to-tl from-white to-black hover:scale-105 transition-all cursor-pointer active:scale-95'>Play now</button>
+          <button 
+            onClick = {() => handlePlayVideo(data)} 
+            className='mt-3 w-full py-2 px-4 text-center bg-white text-black rounded font-bold text-lg hover:bg-gradient-to-tl from-white to-black hover:scale-105 transition-all cursor-pointer active:scale-95'>
+              Play now
+          </button>
           </div>
 
           <div className='flex flex-col justify-center gap-2'>
@@ -103,8 +112,12 @@ const DetailsPage = () => {
             <HorizontalScroll data={similarData} heading={"Similar " + params?.explore} media_type={params?.explore}/>
             <HorizontalScroll data={recomendationData} heading={"Recomendation " + params?.explore} media_type={params?.explore}/>
         </div>
-
-        <Videoplay/>
+        
+        {
+          playVideo && (
+            <Videoplay data = {playvideoId} close = {() => setPlayVideo(false)} media_type={params?.explore}/>
+          )
+        }
 
     </div>
   )
