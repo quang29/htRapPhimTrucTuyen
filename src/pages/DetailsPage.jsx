@@ -6,7 +6,7 @@ import Loading from '../components/Loading'
 import moment from 'moment'
 import useFetch from '../hooks/useFetch'
 import HorizontalScroll from '../components/HorizontalScroll'
-import Videoplay from '../components/Videoplay'
+import Videoplay from '../components/VideoPlay'
 
 
 
