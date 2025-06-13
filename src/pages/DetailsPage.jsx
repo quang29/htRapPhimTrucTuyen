@@ -43,7 +43,7 @@ const DetailsPage = () => {
               <img 
                 src={imageURL + data?.backdrop_path} 
                 alt="banner" 
-                className='w-full h-full object-cover object-top' 
+                className='w-full h-full object-cover object-center' 
               />
             </div>
         </div>
@@ -82,13 +82,13 @@ const DetailsPage = () => {
           </div>
 
           <div>
-            <p><span className='text-white'>Director</span> : {castData?.crew[0]?.name}</p>
+            <p><span className='text-white font-bold'>Director :</span> {castData?.crew[0]?.name}</p>
           </div>
 
-          <h2 className='font-bold text-lg'>Cast :</h2>
+          <h2 className=' text-white font-bold text-lg'>Cast :</h2>
           <div className='grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-5 my-4'>
             {
-              castData?.cast?.filter(el => el?.profile_path).map((starCast, index) => {
+              castData?.cast?.filter(el => el?.profile_path).slice(0, 16).map((starCast, index) => {
                 return(
                   <div>
                     <div>

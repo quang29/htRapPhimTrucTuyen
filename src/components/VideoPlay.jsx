@@ -5,9 +5,9 @@ import useFetchDetails from '../hooks/useFetchDetails'
 const Videoplay = ({data, close, media_type}) => {
   const { data : videoData } = useFetchDetails(`/${media_type}/${data?.id}}/videos`)
   return (
-    <section className='fixed bg-neutral-700/50 top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center'>
+    <section className='fixed bg-black top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center'>
       <div className='bg-black w-full max-h-[80vh] max-w-screen-lg aspect-video rounded relative'>
-        <button onClick={close} className='absolute top-4 right-4 text-3xl cursor-pointer z-50'>
+        <button onClick={close} className='absolute -top-10 right-0 text-3xl cursor-pointer z-50'>
           <FaDoorClosed/>
         </button>
 
@@ -15,6 +15,8 @@ const Videoplay = ({data, close, media_type}) => {
           src={`https://www.youtube.com/embed/${videoData?.results[0]?.key}`}
           className='w-full h-full rounded'
           frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen="true"
         />
         
       </div>

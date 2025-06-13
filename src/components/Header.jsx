@@ -12,7 +12,8 @@ const Header = () => {
     const [searchInput, setSearchInput] = useState(removeSpace)
     const navigate = useNavigate()
 
-    console.log("location",)
+    console.log("location", location);
+    console.log("searchInput", searchInput);
 
     useEffect(() => {
         if(searchInput){
@@ -27,16 +28,17 @@ const Header = () => {
   return (
     <header className='fixed top-0 w-full h-16 bg-black/34 z-40'>
         <div className='container mx-auto px-3 flex items-center h-full'>
+            {/* Logo */}
             <Link to={'/'}>
                 <img src={logo} alt="logo" width={120} />
             </Link>
-
+            {/* Navigation */}
             <nav className='hidden lg:flex items-center gap-2 ml-5'>
             {
                 navigation.map((nav, index) => {
                     return (
                         <div>
-                            <NavLink key={nav.label} to={nav.href} className={({isActive})=>`px-2 hover:text-neutral-400 ${isActive && "text-neutral-400"}`}>
+                            <NavLink key={nav.label} to={nav.href} className={({isActive})=>`px-2 hover:text-white ${isActive && "text-white"}`}>
                                 {nav.label}
                             </NavLink>
                         </div>
@@ -44,7 +46,7 @@ const Header = () => {
                 })
             }
             </nav>
-
+            {/* Search and User Icon */}
             <div className='ml-auto flex items-center gap-4'>
                 <form action="" className='flex items-center gap-2' onSubmit={handleSubmit}>
                     <input type="text" 

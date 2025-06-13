@@ -49,7 +49,7 @@ const BannerHome = () => {
                             </div>
 
                             {/*next&previous button*/}
-                            <div className='absolute top-0 left-0 w-full h-full hidden items-center justify-between px-3 group-hover:lg:flex'>
+                            <div className='absolute top-0 left-0 w-full h-full items-center justify-between px-3 hidden lg:flex'> {/*absolute top-0 left-0 w-full h-full hidden items-center justify-between px-3 group-hover:lg:flex*/}
                                 <button onClick={handlePrevious} className='text-2xl z-10 cursor-pointer opacity-50 hover:brightness-70'><FaAngleLeft /></button>
                                 <button onClick={handleNext} className='text-2xl z-10 cursor-pointer opacity-50 hover:brightness-70'><FaAngleRight /></button>
                             </div>
