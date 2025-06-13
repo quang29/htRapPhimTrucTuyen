@@ -54,8 +54,9 @@ const BannerHome = () => {
                                 <button onClick={handleNext} className='text-2xl z-10 cursor-pointer opacity-50 hover:brightness-70'><FaAngleRight /></button>
                             </div>
 
+                            {/*overlay*/}
                             <div className='absolute top-0 w-full h-full bg-gradient-to-t from-black/70 to-transparent'></div>
-
+                            {/*content*/}
                             <div className='container mx-auto'>
                             <div className='w-full px-3 absolute bottom-0 max-w-md'>
                                 <h2 className='text-2xl font-bold lg:text-4xl text-white drop-shadow-2xl'>{data?.title || data?.name}</h2>
