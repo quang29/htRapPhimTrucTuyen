@@ -4,10 +4,11 @@ import Home from "../pages/Home.jsx";
 import ExplorePage from "../pages/ExplorePage.jsx";
 import DetailsPage from "../pages/DetailsPage.jsx";
 import SearchPage from "../pages/SearchPage.jsx";
-import SubscriptionPage from "../pages/SubcriptionPage.jsx";
+import SubscriptionPage from "../pages/SubscriptionPage.jsx";
 import PaymentMethodsPage from "../pages/PaymentMethodsPage.jsx";
 import FavoritesList from "../components/FavoritesList.jsx";
 import WatchHistory from "../components/WatchHistory.jsx";
+import PaymentQRCode from "../pages/PaymentQRCode.jsx";
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
             {
                 path: "watch-history",
                 element: <WatchHistory />
+            },
+            {
+                path: "payment-qr-code",
+                element: <PaymentQRCode />
             }
         ]
     }
