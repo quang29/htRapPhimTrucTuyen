@@ -38,10 +38,12 @@ const ExplorePage = () => {
   }
 
   useEffect(() => {
+    if (params.explore === 'favorites') return;
     fetchData()
   }, [pageNo])
 
   useEffect(() => {
+    if (params.explore === 'favorites') return;
     setPageNo(1)
     setData([])
     fetchData() 

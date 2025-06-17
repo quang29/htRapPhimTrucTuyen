@@ -4,6 +4,10 @@ import Home from "../pages/Home.jsx";
 import ExplorePage from "../pages/ExplorePage.jsx";
 import DetailsPage from "../pages/DetailsPage.jsx";
 import SearchPage from "../pages/SearchPage.jsx";
+import SubscriptionPage from "../pages/SubcriptionPage.jsx";
+import PaymentMethodsPage from "../pages/PaymentMethodsPage.jsx";
+import FavoritesList from "../components/FavoritesList.jsx";
+import WatchHistory from "../components/WatchHistory.jsx";
 
 const router = createBrowserRouter([
     {
@@ -25,6 +29,22 @@ const router = createBrowserRouter([
             {
                 path: "search",
                 element: <SearchPage />
+            },
+            {
+                path: "subscription",
+                element: <SubscriptionPage />
+            },
+            {
+                path: "payment-methods",
+                element: <PaymentMethodsPage />
+            },
+            {
+                path: "favorites",
+                element: <FavoritesList />
+            },
+            {
+                path: "watch-history",
+                element: <WatchHistory />
             }
         ]
     }

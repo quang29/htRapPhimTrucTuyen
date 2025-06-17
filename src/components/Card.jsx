@@ -11,7 +11,7 @@ const Card = ({data,trending,index,media_type}) => {
         
         {
           data?.poster_path ? (
-            <img src={imageURL+data?.poster_path}/>
+            <img src={imageURL+data?.poster_path} alt={data?.title || data?.name} loading="lazy"/>
           ) : (
             <div className=' bg-gray-800 w-full h-full flex justify-center items-center '>
               <h1 className='text-white text-2xl font-semibold'>{data?.name || data?.title}</h1>
@@ -19,7 +19,7 @@ const Card = ({data,trending,index,media_type}) => {
           )
         }
 
-        <img src={imageURL+data?.poster_path}/>
+
 
         <div className='absolute top-4'>
             {trending && (

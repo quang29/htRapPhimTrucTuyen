@@ -2,6 +2,7 @@ import { MdHomeFilled } from "react-icons/md";
 import { PiTelevisionSimpleBold } from "react-icons/pi";
 import { MdOutlineMovie } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
+import { MdOutlineWorkspacePremium } from "react-icons/md";
 
 export const navigation = [
     {
@@ -13,6 +14,11 @@ export const navigation = [
         label: 'Movies',
         href: 'movie',
         icon: <MdOutlineMovie/>
+    },
+    {
+        label: 'Plans',
+        href: 'subscription',
+        icon: <MdOutlineWorkspacePremium/>
     }
 ]
 
