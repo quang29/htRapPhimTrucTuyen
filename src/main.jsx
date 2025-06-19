@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { Toaster } from "react-hot-toast";
 
+
 /**Set up axious */
 axios.defaults.baseURL = 'https://api.themoviedb.org/3'
 axios.defaults.headers.common['Authorization'] = `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`

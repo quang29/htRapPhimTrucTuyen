@@ -14,8 +14,8 @@ import FavoritesList from './FavoritesList';
 
 const Header = () => {
     const location = useLocation()
-    const removeSpace = location?.search?.slice(3)?.split("%20")?.join(" ")
-    const [searchInput, setSearchInput] = useState(removeSpace)
+    const query = new URLSearchParams(location.search).get('q') || '';
+    const [searchInput, setSearchInput] = useState(query);
     const showLoginPopup = useSelector((state) => state.auth.showLoginPopup);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -28,10 +28,14 @@ const Header = () => {
     console.log("searchInput", searchInput);
 
     useEffect(() => {
-        if(searchInput){
-            navigate(`/search?q=${searchInput}`)
-        }
-    }, [searchInput])
+    // Chỉ navigate khi đang ở trang / hoặc /search
+    if (
+        searchInput &&
+        (location.pathname === '/' || location.pathname === '/search')
+    ) {
+        navigate(`/search?q=${searchInput}`);
+    }
+}, [searchInput, location.pathname]);
 
      useEffect(() => {
     const handleClickOutside = (event) => {
@@ -99,7 +103,7 @@ const Header = () => {
                 onClick={() => setShowDropdown(!showDropdown)}
                 className='w-8 h-8 rounded-full overflow-hidden cursor-pointer border-2 border-white'
               >
-                <img src={user.photo} alt={user.name} className='w-full h-full object-cover' />
+                <img src={user.photo} alt={user.name} className='w-full h-full object-cover' referrerPolicy="no-referrer" />
               </div>
 
               {showDropdown && (

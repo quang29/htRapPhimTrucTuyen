@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -14,6 +14,8 @@ import { doc, getDoc } from 'firebase/firestore'
 import { Toaster } from 'react-hot-toast'
 
 function App() {
+  const location = useLocation()
+   console.log('🔍 Pathname:', location.pathname);
   const dispatch = useDispatch()
 
   const fetchTrendingData = async () => {

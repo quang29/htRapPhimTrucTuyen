@@ -1,7 +1,6 @@
-// PaymentQRCode.jsx
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, setDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,14 +9,13 @@ const PaymentQRCode = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const reduxState = useSelector((state) => state.subscription);
-const reduxMethod = useSelector((state) => state.payment.paymentMethod);
-const userId = useSelector((state) => state.auth.user?.uid);
+  const reduxMethod = useSelector((state) => state.payment.paymentMethod);
+  const userId = useSelector((state) => state.auth.user?.uid);
 
-const selectedPlanId = reduxState.selectedPlanId || localStorage.getItem('selectedPlanId');
-const billingCycle = reduxState.billingCycle || localStorage.getItem('billingCycle');
-const amount = reduxState.amount || parseInt(localStorage.getItem('amount')) || 0;
-const paymentMethod = reduxMethod || localStorage.getItem('paymentMethod');
-
+  const selectedPlanId = reduxState.selectedPlanId || localStorage.getItem('selectedPlanId');
+  const billingCycle = reduxState.billingCycle || localStorage.getItem('billingCycle');
+  const amount = reduxState.amount || parseInt(localStorage.getItem('amount')) || 0;
+  const paymentMethod = reduxMethod || localStorage.getItem('paymentMethod');
 
   const QRImage =
     'https://api.vietqr.io/image/970422-0465179699999-NGUYENMINHQUANG.png?amount=' +
@@ -48,6 +46,46 @@ const paymentMethod = reduxMethod || localStorage.getItem('paymentMethod');
     }
   };
 
+const handleVNPayPayment = async () => {
+  try {
+    const orderId = `movieplan_${Date.now()}`;
+await setDoc(doc(db, "payments", orderId), {
+  userId,
+  planId: selectedPlanId,
+  billingCycle,
+  amount,
+  method: "vnpay",
+  status: "pending",
+  timestamp: serverTimestamp(),
+});
+
+// Gửi request tới backend:
+const response = await fetch("http://localhost:3001/create-payment", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    amount,
+    orderId, // 👈 Bây giờ ID đã khớp với Firestore
+    userId: userId || "guest",
+  }),
+});
+
+    const data = await response.json();
+    if (data.url) {
+      localStorage.setItem('paymentId', orderId);
+      window.location.href = data.url;
+    } else {
+      alert('Could not create VNPay payment. Please try again.');
+    }
+  } catch (error) {
+    console.error('VNPay error:', error);
+    alert('Error occurred while processing VNPay payment.');
+  }
+};
+
+
   return (
     <div className="min-h-screen bg-black text-white py-16 px-4">
       <div className="max-w-xl mx-auto text-center">
@@ -68,7 +106,7 @@ const paymentMethod = reduxMethod || localStorage.getItem('paymentMethod');
             <p className="text-gray-400 mb-4">Click below to proceed with VNPay:</p>
             <button
               className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-black font-bold rounded-lg hover:from-blue-400 hover:to-cyan-400"
-              onClick={() => alert('VNPay integration coming soon')}
+              onClick={handleVNPayPayment}
             >
               Go to VNPay
             </button>
@@ -76,12 +114,13 @@ const paymentMethod = reduxMethod || localStorage.getItem('paymentMethod');
         )}
 
         <div className="mt-8 space-x-4">
-                      <button
+          <button
             onClick={() => navigate('/subscription')}
             className="text-gray-400 hover:text-white underline text-sm"
           >
             ← Cancel and go back
           </button>
+          {paymentMethod === 'vietqr' && (
           <button
             onClick={handleConfirmPayment}
             disabled={isSubmitting}
@@ -89,7 +128,7 @@ const paymentMethod = reduxMethod || localStorage.getItem('paymentMethod');
           >
             {isSubmitting ? 'Submitting...' : "I've paid"}
           </button>
-
+          )}
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
+// src/pages/DetailsPage.jsx
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import AddToFavorites from '../components/AddToFavorites';
@@ -8,6 +9,7 @@ import useFetch from '../hooks/useFetch';
 import Loading from '../components/Loading';
 import HorizontalScroll from '../components/HorizontalScroll';
 import Videoplay from '../components/VideoPlay';
+import { useSubscriptionStatus } from '../hooks/useSubscriptionStatus';
 import { showLogin } from '../store/authSlice';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -15,32 +17,43 @@ import { db } from '../firebase';
 const DetailsPage = () => {
   const params = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const imageURL = useSelector((state) => state.movieData.imageURL);
   const user = useSelector((state) => state.auth.user);
+
+  const { status: subscriptionStatus, loading: subLoading } = useSubscriptionStatus(user?.uid);
+  console.log("👤 UID:", user?.uid);
+  console.log("📦 Subscription status:", subscriptionStatus);
+
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [playVideo, setPlayVideo] = useState(false);
+  const [playvideoId, setPlayVideoId] = useState('');
 
   const { data } = useFetchDetails(`/${params?.explore}/${params?.id}`);
   const { data: castData } = useFetchDetails(`/${params?.explore}/${params?.id}/credits`);
   const { data: similarData } = useFetch(`/${params?.explore}/${params?.id}/similar`);
   const { data: recommendationData } = useFetch(`/${params?.explore}/${params?.id}/recommendations`);
 
-  const [playVideo, setPlayVideo] = useState(false);
-  const [playvideoId, setPlayVideoId] = useState('');
-
   const handlePlayVideo = async (videoData) => {
     if (!user) return dispatch(showLogin());
-    const docRef = doc(db, 'users', user.uid, 'history', data.id.toString());
-  await setDoc(doc(db, "users", user.uid, "watchHistory", data.id.toString()), {
+
+    if (!subLoading && subscriptionStatus !== "success") {
+      setShowSubscribeModal(true);
+      return;
+    }
+
+    await setDoc(doc(db, "users", user.uid, "watchHistory", data.id.toString()), {
       ...data,
       watchedAt: new Date().toISOString(),
-      media_type: params?.explore
+      media_type: params?.explore,
     });
+
     setPlayVideoId(videoData);
     setPlayVideo(true);
   };
 
   const handleAddFavorite = () => {
     if (!user) return dispatch(showLogin());
-    // TODO: Add favorite movie logic here
     alert('Added to favorite (placeholder)');
   };
 
@@ -73,7 +86,7 @@ const DetailsPage = () => {
             className='h-80 w-60 object-cover rounded'
           />
           <button
-            onClick = {() => handlePlayVideo(data)} 
+            onClick={() => handlePlayVideo(data)}
             className='mt-3 w-full py-2 px-4 text-center bg-white text-black rounded font-bold text-lg hover:bg-gradient-to-tl from-white to-black hover:scale-105 transition-all cursor-pointer active:scale-95'>
             Play now
           </button>
@@ -147,6 +160,35 @@ const DetailsPage = () => {
           close={() => setPlayVideo(false)}
           media_type={params?.explore}
         />
+      )}
+
+      {/* Subscription Prompt */}
+      {showSubscribeModal && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+          <div className="bg-white text-black p-6 rounded-lg max-w-sm text-center space-y-4">
+            <h2 className="text-xl font-bold">Bạn cần mua gói để xem phim</h2>
+            <p>Hãy chọn một gói để tiếp tục xem nội dung này.</p>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                onClick={() => {
+                  setShowSubscribeModal(false);
+                }}
+                className="px-4 py-2 bg-gray-400 text-white rounded"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => {
+                  setShowSubscribeModal(false);
+                  navigate("/subscription");
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded"
+              >
+                Tiếp tục thanh toán
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

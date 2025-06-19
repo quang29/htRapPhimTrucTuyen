@@ -9,6 +9,7 @@ import PaymentMethodsPage from "../pages/PaymentMethodsPage.jsx";
 import FavoritesList from "../components/FavoritesList.jsx";
 import WatchHistory from "../components/WatchHistory.jsx";
 import PaymentQRCode from "../pages/PaymentQRCode.jsx";
+import PaymentSuccess from "../pages/PaymentSuccess.jsx";
 
 const router = createBrowserRouter([
     {
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
                 element: <DetailsPage />
             },
             {
-                path: "search",
+                path: "search/:query?",
                 element: <SearchPage />
             },
             {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
             {
                 path: "payment-qr-code",
                 element: <PaymentQRCode />
+            },
+            {
+                path: "payment-success",
+                element: <PaymentSuccess />
             }
         ]
     }
