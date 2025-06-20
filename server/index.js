@@ -40,24 +40,24 @@ app.post("/create-payment", async (req, res) => {
       return res.status(400).json({ error: "Invalid amount" });
     }
 
-    console.log({
-      vnp_Amount: amount.toString(),
-      vnp_TxnRef: orderId || `order_${Date.now()}`,
-      vnp_OrderInfo: `Thanh toan phim cho User ${userId}`,
-      vnp_ReturnUrl: `http://localhost:5173/payment-success`, // ✅ FE sẽ xử lý query tại đây
-      vnp_IpnUrl: "https://cc6d-42-113-105-132.ngrok-free.app/vnpay-ipn", // ✅ IPN sẽ gửi dữ liệu về đây
-      vnp_IpAddr: "127.0.0.1",
-      vnp_OrderType: "other",
-      vnp_Locale: "vn",
-      vnp_CurrCode: "VND",
-    });
+    // console.log({
+    //   vnp_Amount: amount.toString(),
+    //   vnp_TxnRef: orderId || `order_${Date.now()}`,
+    //   vnp_OrderInfo: `Thanh toan phim cho User ${userId}`,
+    //   vnp_ReturnUrl: `http://localhost:5173/payment-success`, // ✅ FE sẽ xử lý query tại đây
+    //   // vnp_IpnUrl: "https://cc6d-42-113-105-132.ngrok-free.app/vnpay-ipn", // ✅ IPN sẽ gửi dữ liệu về đây
+    //   vnp_IpAddr: "127.0.0.1",
+    //   vnp_OrderType: "other",
+    //   vnp_Locale: "vn",
+    //   vnp_CurrCode: "VND",
+    // });
 
     const paymentUrl = await vnpay.buildPaymentUrl({
       vnp_Amount: amount.toString(),
       vnp_TxnRef: orderId || `order_${Date.now()}`,
       vnp_OrderInfo: `Thanh toan phim cho User ${userId}`,
       vnp_ReturnUrl: `http://localhost:5173/payment-success`, // ✅ FE sẽ xử lý query tại đây
-      // vnp_IpnUrl: "https://cc6d-42-113-105-132.ngrok-free.app/vnpay-ipn", // ✅ IPN sẽ gửi dữ liệu về đây
+      // vnp_IpnUrl: "https://e14f-42-114-138-206.ngrok-free.app/vnpay-ipn", // ✅ IPN sẽ gửi dữ liệu về đây
       vnp_IpAddr: "127.0.0.1",
       vnp_OrderType: "other",
       vnp_Locale: "vn",
@@ -72,7 +72,7 @@ app.post("/create-payment", async (req, res) => {
   }
 });
 
-// 🔹 Route 2: Xử lý IPN khi VNPay redirect lại
+// 🔹 Route 2: Xử lý IPN khi VNPay redirect lại(chưa dùng)
 app.get("/vnpay-ipn", async (req, res) => {
   const queryParams = { ...req.query };
   const vnp_SecureHash = queryParams.vnp_SecureHash;

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { doc, updateDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const PaymentSuccess = () => {
   const location = useLocation();
@@ -17,6 +19,17 @@ const PaymentSuccess = () => {
       amount,
     });
   }, [location]);
+
+  useEffect(() => {
+    if (paymentInfo && paymentInfo.status === "00" && paymentInfo.txnRef) {
+      // Cập nhật Firestore
+      setDoc(doc(db, "payments", paymentInfo.txnRef), {
+        status: "success",
+        vnp_ResponseCode: paymentInfo.status,
+        updatedAt: new Date()
+      }, { merge: true });
+    }
+  }, [paymentInfo]);
 
   if (!paymentInfo) return <div className="text-white p-8">Loading...</div>;
 
