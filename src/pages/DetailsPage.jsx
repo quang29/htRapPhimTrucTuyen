@@ -9,6 +9,7 @@ import useFetch from '../hooks/useFetch';
 import Loading from '../components/Loading';
 import HorizontalScroll from '../components/HorizontalScroll';
 import Videoplay from '../components/VideoPlay';
+import RatingButton from '../components/RatingButton';
 import { useSubscriptionStatus } from '../hooks/useSubscriptionStatus';
 import { showLogin } from '../store/authSlice';
 import { doc, setDoc } from 'firebase/firestore';
@@ -98,7 +99,7 @@ const DetailsPage = () => {
             {data.title || data.name}
           </h2>
           <p className='text-neutral-400'>{data.tagline}</p>
-
+          <RatingButton movieId={data.id}/>
           <div className='flex items-center my-3 gap-3 text-neutral-300'>
             <p>Release Date: {moment(data.release_date).format('DD-MM-YYYY')}</p>
             <span>|</span>
