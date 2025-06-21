@@ -104,9 +104,18 @@ const DetailsPage = () => {
             <p>Release Date: {moment(data.release_date).format('DD-MM-YYYY')}</p>
             <span>|</span>
             <p>Duration: {duration[0]}h {duration[1]}m</p>
+            
           </div>
 
           <div>
+            <div className="flex gap-2 flex-wrap mb-5">
+  {data.genres.map((g) => (
+    <span key={g.id} className="bg-white/10 text-sm text-white px-2 py-1 rounded">
+      {g.name}
+    </span>
+  ))}
+</div>
+
             <h3 className='text-xl font-bold text-white mb-1'>Overview</h3>
             <p>{data.overview}</p>
           </div>
