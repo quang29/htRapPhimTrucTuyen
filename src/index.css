@@ -8,5 +8,5 @@
 body {
   font-family: "Nunito Sans", sans-serif;
   scroll-behavior: smooth;
-  @apply bg-neutral-900 text-neutral-300 p-0 m-0;
+  @apply bg-black text-white p-0 m-0;
 }

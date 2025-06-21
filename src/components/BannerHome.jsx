@@ -35,8 +35,8 @@ const BannerHome = () => {
 
 
   return (
-    <section className='w-full h-full'>
-        <div className='flex min-h-full max-h-[95vh] overflow-hidden'>
+    <section className='w-full h-screen relative overflow-hidden'>
+        <div className='flex h-full overflow-hidden'>
             {
                 bannerData.map((data, index) => {
                     return (
@@ -58,21 +58,20 @@ const BannerHome = () => {
                             <div className='absolute top-0 w-full h-full bg-gradient-to-t from-black/70 to-transparent'></div>
                             {/*content*/}
                             <div className='container mx-auto'>
-                            <div className='w-full px-3 absolute bottom-0 max-w-md'>
+                            <div className='w-full px-3 absolute bottom-10 left-0 max-w-xl text-left lg:pl-16'>
                                 <h2 className='text-2xl font-bold lg:text-4xl text-white drop-shadow-2xl'>{data?.title || data?.name}</h2>
                                 <p className='text-ellipsis line-clamp-3 my-2'>{data.overview}</p>
-                                <div className='flex items-center gap-4'>
+                                {/* <div className='flex items-center gap-4'>
                                     <p>Rating : { Number(data.vote_average).toFixed(1) }+</p>
                                     <span>|</span>
                                     <p>
                                         {data.release_date || data.first_air_date? new Date(data.release_date || data.first_air_date).getMonth() + 1 + "/" + new Date(data.release_date || data.first_air_date).getFullYear() : "N/A"}
                                     </p>
-
-                                    </div>
+                                    </div> */}
                                     <Link to={"/"+data?.media_type+"/"+data.id}>
                                         <button 
-                                            className="bg-white px-4 py-2 text-black font-bold rounded mt-4 shadow-md transition-all hover:brightness-50 cursor-pointer hover:scale-105"
-                                            >Play
+                                            className="bg-white px-4 py-2 text-black text-xl font-bold rounded mt-4 shadow-md transition-all hover:brightness-50 cursor-pointer hover:scale-105"
+                                            >▶ Play
                                         </button>
                                     </Link>
 

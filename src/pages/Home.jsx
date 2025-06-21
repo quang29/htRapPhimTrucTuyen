@@ -15,7 +15,7 @@ const Home = () => {
   const { data : onTheAirShowData } = useFetch('/tv/on_the_air')
 
   return (
-    <div>
+    <div className='w-full h-full pb-5 bg-gradient-to-b from-black to-gray-900 text-white'> 
         <BannerHome/>
         <HorizontalScroll data={trendingData} heading='Trending Now' trending={true}/>
         <HorizontalScroll data={nowPlayingData} heading='Now Playing Movies' media_type={"movie"}/>
