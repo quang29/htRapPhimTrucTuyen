@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import Card from '../components/Card'
+import tmdbAxios from '../api/tmdbAxios'
 
 const ExplorePage = () => {
   const params = useParams()
@@ -13,7 +14,7 @@ const ExplorePage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`/discover/${params.explore}`, {
+      const response = await tmdbAxios.get(`/discover/${params.explore}`, {
         params: {
           page: pageNo
         }

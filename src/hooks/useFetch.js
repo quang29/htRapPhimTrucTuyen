@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from 'axios'
+import tmdbAxios from "../api/tmdbAxios";
 
 const useFetch = (endpoint) => {
     const [data, setData] = useState([])
@@ -8,7 +9,7 @@ const useFetch = (endpoint) => {
     const fetchData = async () => {
         try {
             setLoading(true)
-          const response = await axios.get(endpoint)
+          const response = await tmdbAxios.get(endpoint)
             setLoading(false)
           setData(response.data.results)
     

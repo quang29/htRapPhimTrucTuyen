@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Card from '../components/Card';
+import tmdbAxios from '../api/tmdbAxios';
 
 const SearchPage = () => {
   const location = useLocation();
@@ -15,7 +16,7 @@ const SearchPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`search/multi`, {
+      const response = await tmdbAxios.get(`search/multi`, {
         params: {
           query: query,
           page: page,

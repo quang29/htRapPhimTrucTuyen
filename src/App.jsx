@@ -12,6 +12,7 @@ import { auth, db } from './firebase'
 import { setUser, clearUser } from './store/authSlice'
 import { doc, getDoc } from 'firebase/firestore'
 import { Toaster } from 'react-hot-toast'
+import tmdbAxios from './api/tmdbAxios'
 
 function App() {
   const location = useLocation()
@@ -20,7 +21,7 @@ function App() {
 
   const fetchTrendingData = async () => {
     try {
-      const response = await axios.get('/trending/all/day')
+      const response = await tmdbAxios.get('/trending/all/day')
 
       dispatch(setBannerData(response.data.results))
 
@@ -31,7 +32,7 @@ function App() {
 
   const fetchConfiguration = async () => {
     try {
-      const response = await axios.get('/configuration')
+      const response = await tmdbAxios.get('/configuration')
 
       dispatch(setImageURL(response.data.images.secure_base_url + "original"))
     } catch (error) {

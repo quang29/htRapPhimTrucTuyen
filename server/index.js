@@ -1,9 +1,13 @@
 // index.js
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const { VNPay } = require("vnpay");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
+
+// 👉 Dùng Gemini
+const aiSearch = require("./routes/aiSearch"); 
 
 const app = express();
 const PORT = 3001;
@@ -17,6 +21,9 @@ const db = admin.firestore();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// 👉 Kết nối route AI Search (nên đặt TRƯỚC các route cụ thể khác)
+app.use("/api/ai-search", aiSearch);
 
 // VNPay config
 const vnpay = new VNPay({

@@ -66,7 +66,7 @@ const Header = () => {
     <header className='fixed top-0 w-full h-16 bg-black/34 z-40'>
         <div className='container mx-auto px-3 flex items-center h-full'>
             {/* Logo */}
-            <Link to={'/'}>
+            <Link to={'/'} onClick ={() => setSearchInput('')}>
                 <img src={logo} alt="logo" width={120} />
             </Link>
             {/* Navigation */}
