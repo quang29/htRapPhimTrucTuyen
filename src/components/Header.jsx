@@ -13,31 +13,28 @@ import ViewProfile from './ViewProfile';
 import FavoritesList from './FavoritesList';
 
 const Header = () => {
-    const location = useLocation()
+    const location = useLocation();
+    const navigate = useNavigate();
     const query = new URLSearchParams(location.search).get('q') || '';
     const [searchInput, setSearchInput] = useState(query);
     const showLoginPopup = useSelector((state) => state.auth.showLoginPopup);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const dropdownRef = useRef(null);
-    const navigate = useNavigate()
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user)
 
     console.log("location", location);
     console.log("searchInput", searchInput);
 
+    // Khi URL thay đổi (ở /search), đồng bộ input
     useEffect(() => {
-    // Chỉ navigate khi đang ở trang / hoặc /search
-    if (
-        searchInput &&
-        (location.pathname === '/' || location.pathname === '/search')
-    ) {
-        navigate(`/search?q=${searchInput}`);
-    }
-}, [searchInput, location.pathname]);
+      if (location.pathname === '/search') {
+        setSearchInput(query);
+      }
+    }, [location.pathname, location.search]);
 
-     useEffect(() => {
+    useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
@@ -61,6 +58,24 @@ const Header = () => {
       console.error("Lỗi đăng xuất:", error);
     }
   }
+
+  const handleHeaderInputChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    if (location.pathname !== '/search') {
+      // Nếu chưa ở search, chuyển sang search
+      if (value) {
+        navigate(`/search?q=${value}`);
+      }
+    } else {
+      // Nếu đang ở search, chỉ update URL
+      if (value) {
+        navigate(`/search?q=${value}`);
+      } else {
+        navigate('/search');
+      }
+    }
+  };
 
   return (
     <header className='fixed top-0 w-full h-16 bg-black/34 z-40'>
@@ -86,12 +101,13 @@ const Header = () => {
             {/* Search and User Icon */}
             <div className='ml-auto flex items-center gap-4'>
                 <form action="" className='flex items-center gap-2' onSubmit={handleSubmit}>
-                    <input type="text" 
-                        className='text-white px-3 py-1 rounded-md outline-none hidden lg:block' 
-                        placeholder='Search...'
-                        onChange={(e)=>setSearchInput(e.target.value)}
-                        value={searchInput}
-                    />
+                    <input
+    type="text"
+    className="text-white px-3 py-1 rounded-md outline-none hidden lg:block"
+    placeholder="Search..."
+    onChange={handleHeaderInputChange}
+    value={searchInput}
+  />
                     <button className='gap-5 text-white text-2xl cursor-pointer'>
                     <IoSearchOutline/>
                     </button>
