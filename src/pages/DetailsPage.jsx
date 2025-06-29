@@ -175,26 +175,35 @@ const DetailsPage = () => {
       {/* Subscription Prompt */}
       {showSubscribeModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
-          <div className="bg-white text-black p-6 rounded-lg max-w-sm text-center space-y-4">
-            <h2 className="text-xl font-bold">Bạn cần mua gói để xem phim</h2>
-            <p>Hãy chọn một gói để tiếp tục xem nội dung này.</p>
-            <div className="flex justify-center gap-4 mt-4">
+          <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 text-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center space-y-5 border border-white/10 relative animate-fadeIn">
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-yellow-400 text-5xl mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-14 h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="#facc15" />
+                  <path stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01" />
+                </svg>
+              </span>
+              <h2 className="text-2xl font-extrabold">Premium Required</h2>
+              <p className="text-neutral-300">
+                You need a subscription plan to watch this movie.<br />
+                Please choose a plan to continue enjoying premium content.
+              </p>
+            </div>
+            <div className="flex justify-center gap-4 mt-6">
               <button
-                onClick={() => {
-                  setShowSubscribeModal(false);
-                }}
-                className="px-4 py-2 bg-gray-400 text-white rounded"
+                onClick={() => setShowSubscribeModal(false)}
+                className="px-5 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition font-semibold"
               >
-                Hủy
+                Cancel
               </button>
               <button
                 onClick={() => {
                   setShowSubscribeModal(false);
                   navigate("/subscription");
                 }}
-                className="px-4 py-2 bg-red-600 text-white rounded"
+                className="px-5 py-2 rounded-lg bg-gradient-to-tr from-yellow-400 to-red-500 text-black font-bold shadow hover:scale-105 transition"
               >
-                Tiếp tục thanh toán
+                Upgrade Now
               </button>
             </div>
           </div>

@@ -31,3 +31,5 @@ node_modules/
 # Firebase credentials (avoid leaking secrets)
 scripts/serviceAccountKey.json
 server/serviceAccountKey.json
+
+.env

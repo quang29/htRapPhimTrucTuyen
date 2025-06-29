@@ -37,7 +37,6 @@ const FavoritesList = () => {
       ) : (
         <div className="flex flex-wrap gap-4 justify-start">
           {favorites.map((movie, index) => {
-  console.log("movie", movie); // 👈 Thêm dòng này
   return (
     <Card key={movie.id} data={movie} index={index + 1} media_type={movie.media_type} />
   );

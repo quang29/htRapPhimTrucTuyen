@@ -8,11 +8,14 @@ import { Link } from 'react-router-dom';
 const WatchHistory = () => {
   const user = useSelector((state) => state.auth.user);
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHistory = async () => {
-      if (!user) return;
-
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       try {
         const historyRef = collection(db, 'users', user.uid, 'watchHistory');
         const snapshot = await getDocs(historyRef);
@@ -26,10 +29,13 @@ const WatchHistory = () => {
       } catch (err) {
         console.error("Failed to fetch history:", err);
       }
+      setLoading(false);
     };
 
     fetchHistory();
   }, [user]);
+
+  if (loading) return <div className="text-white text-center py-8">Loading watch history...</div>;
 
   return (
     <div className="container mt-10 pt-10 mx-auto px-4 py-6">

@@ -24,8 +24,6 @@ const Header = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user)
 
-    console.log("location", location);
-    console.log("searchInput", searchInput);
 
     // Khi URL thay đổi (ở /search), đồng bộ input
     useEffect(() => {
@@ -86,18 +84,20 @@ const Header = () => {
             </Link>
             {/* Navigation */}
             <nav className='hidden lg:flex items-center gap-2 ml-5'>
-            {
-                navigation.map((nav, index) => {
-                    return (
-                        <div>
-                            <NavLink key={nav.label} to={nav.href} className={({isActive})=>`px-2 hover:text-white ${isActive && "text-white"}`}>
-                                {nav.label}
-                            </NavLink>
-                        </div>
-                    )
-                })
-            }
-            </nav>
+  {navigation.map((nav, index) => (
+    <div key={nav.href}>
+      <NavLink
+        to={nav.href}
+        className={({ isActive }) =>
+          `px-2 hover:text-white ${isActive ? "text-white font-bold" : ""}`
+        }
+        end={nav.href === "/"} // Đảm bảo chỉ / mới active khi ở đúng /
+      >
+        {nav.label}
+      </NavLink>
+    </div>
+  ))}
+</nav>
             {/* Search and User Icon */}
             <div className='ml-auto flex items-center gap-4'>
                 <form action="" className='flex items-center gap-2' onSubmit={handleSubmit}>

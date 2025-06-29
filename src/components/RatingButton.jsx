@@ -3,11 +3,17 @@ import { useSelector } from "react-redux";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 
 export default function RatingButton({ movieId }) {
   const user = useSelector((state) => state.auth.user);
   const [rating, setRating] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
+
+  // Reset rating mỗi khi movieId thay đổi
+  useEffect(() => {
+    setRating(null);
+  }, [movieId]);
 
   useEffect(() => {
     if (!user) return;
@@ -20,7 +26,10 @@ export default function RatingButton({ movieId }) {
   }, [user, movieId]);
 
   const handleRate = async (type) => {
-    if (!user) return alert("Please log in to rate this movie!");
+    if (!user) {
+      toast.error("Please log in to rate this movie!");
+      return;
+    }
     const ref = doc(db, "users", user.uid, "ratings", movieId.toString());
 
     if (rating === type) {

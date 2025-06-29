@@ -4,6 +4,7 @@ import axios from 'axios';
 import Card from '../components/Card';
 import tmdbAxios from '../api/tmdbAxios';
 import { Switch } from '@headlessui/react';
+import { toast } from 'react-hot-toast';
 
 const SearchPage = () => {
   const location = useLocation();
@@ -55,8 +56,9 @@ const SearchPage = () => {
         setData([]);
       }
     } catch (err) {
-      console.error('❌ AI search error:', err);
+      setLoading(false);
       setData([]);
+      toast.error("AI Search failed. Please try again or use normal search.");
     }
     setLoading(false);
   };

@@ -75,7 +75,7 @@ const handleGoogleLogin = async () => {
 
         {/* Title */}
         <h1 className="text-3xl font-bold text-white mt-4">
-          Continue to <span className="text-white">MEOVI</span>
+          Continue to <span className="text-white">Mowlvi</span>
         </h1>
 
         {/* Google Button */}
