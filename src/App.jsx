@@ -13,6 +13,7 @@ import { setUser, clearUser } from './store/authSlice'
 import { doc, getDoc } from 'firebase/firestore'
 import { Toaster } from 'react-hot-toast'
 import tmdbAxios from './api/tmdbAxios'
+import { toast } from 'react-hot-toast'; // Thêm nếu chưa có
 
 function App() {
   const location = useLocation()
@@ -53,8 +54,12 @@ useEffect(() => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          // ✅ Ưu tiên thông tin mới nhất từ Firestore
           const userData = docSnap.data();
+          if (userData.locked) {
+            dispatch(clearUser());
+            await auth.signOut();
+            return;
+          }
           dispatch(setUser({
             ...userData,
             email: user.email,

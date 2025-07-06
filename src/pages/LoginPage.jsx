@@ -6,6 +6,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { setUser } from '../store/authSlice';
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, provider, db } from "../firebase";
+import { toast } from 'react-hot-toast'; // Thêm nếu chưa có
 
 const LoginPage = ({ onClose }) => {
     const dispatch = useDispatch();
@@ -22,32 +23,42 @@ const handleGoogleLogin = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-        // Dữ liệu cần lưu
-      const userInfo = {
-        uid: user.uid,
-        email: user.email,
-        name: user.displayName,
-        photo: user.photoURL,
-      };
+    const userInfo = {
+      uid: user.uid,
+      email: user.email,
+      name: user.displayName,
+      photo: user.photoURL,
+    };
 
-      // Gửi lên Redux
-      dispatch(setUser(userInfo));
+    // Lưu vào Firestore nếu chưa có
+    const userRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(userRef);
 
-      // Lưu vào Firestore nếu chưa có
-      const userRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(userRef);
+    if (!docSnap.exists()) {
+      await setDoc(userRef, {
+        ...userInfo,
+        createdAt: new Date().toISOString(),
+        role: "user",
+        locked: false, // Mặc định không bị khoá
+      });
+      dispatch(setUser({ ...userInfo, role: "user", locked: false }));
+      onClose();
+      return;
+    }
 
-      if (!docSnap.exists()) {
-        await setDoc(userRef, {
-          ...userInfo,
-          createdAt: new Date().toISOString(),
-        });
-      }
-    console.log("Đăng nhập thành công:", user);
-    // Nếu muốn lưu vào localStorage hoặc Redux thì thêm ở đây
-    onClose(); // đóng popup sau khi đăng nhập
+    const userData = docSnap.data();
+    if (userData.locked) {
+      toast.error("Your account has been locked. Please contact support.");
+      // Đăng xuất khỏi Firebase Auth nếu cần
+      await auth.signOut();
+      return;
+    }
+
+    dispatch(setUser({ ...userData, uid: user.uid }));
+    onClose();
   } catch (error) {
-    console.error("Lỗi đăng nhập:", error);
+    toast.error("Login failed. Please try again.");
+    console.error("Login error:", error);
   }
 };
 

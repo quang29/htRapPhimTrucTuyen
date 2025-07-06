@@ -10,6 +10,11 @@ import FavoritesList from "../components/FavoritesList.jsx";
 import WatchHistory from "../components/WatchHistory.jsx";
 import PaymentQRCode from "../pages/PaymentQRCode.jsx";
 import PaymentSuccess from "../pages/PaymentSuccess.jsx";
+import PaymentsManager from "../pages/admin/PaymentsManager.jsx";
+import AdminLayout from "../pages/admin/AdminLayout.jsx";
+import UsersManager from '../pages/admin/UsersManager';
+import Statistics from '../pages/admin/Statistics';
+import PlansManager from '../pages/admin/PlansManager';
 
 const router = createBrowserRouter([
     {
@@ -55,6 +60,28 @@ const router = createBrowserRouter([
             {
                 path: "payment-success",
                 element: <PaymentSuccess />
+            },
+            {
+                path: "admin",
+                element: <AdminLayout />,
+                children: [
+                    {
+                        index: true,
+                        element: <Statistics />
+                    },
+                    {
+                        path: "payments",
+                        element: <PaymentsManager />
+                    },
+                    {
+                        path: "users",
+                        element: <UsersManager />
+                    },
+                    {
+                        path: "plans",
+                        element: <PlansManager />
+                    }
+                ]
             }
         ]
     }

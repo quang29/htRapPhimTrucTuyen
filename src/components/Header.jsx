@@ -23,6 +23,7 @@ const Header = () => {
     const dropdownRef = useRef(null);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user)
+    const isAdmin = user?.role === 'admin';
 
 
     // Khi URL thay đổi (ở /search), đồng bộ input
@@ -130,31 +131,43 @@ const Header = () => {
                   </div>
                   <ul className='text-sm'>
                     <li
-  onClick={() => {
-    setShowDropdown(false);
-    setShowProfile(true);
-  }}
-  className='px-4 py-2 hover:bg-zinc-700 cursor-pointer'
->
-  View Profile
-</li>
-
+                      onClick={() => {
+                        setShowDropdown(false);
+                        setShowProfile(true);
+                      }}
+                      className='px-4 py-2 hover:bg-zinc-700 cursor-pointer'
+                    >
+                      View Profile
+                    </li>
                     <li
-  onClick={() => {
-    setShowDropdown(false);
-    navigate('/favorites');
-  }}
-  className='px-4 py-2 hover:bg-zinc-700 cursor-pointer'
->
-  Favorites List
-</li>
-
-                    <li 
+                      onClick={() => {
+                        setShowDropdown(false);
+                        navigate('/favorites');
+                      }}
+                      className='px-4 py-2 hover:bg-zinc-700 cursor-pointer'
+                    >
+                      Favorites List
+                    </li>
+                    <li
                       onClick={() => {
                         setShowDropdown(false);
                         navigate('/watch-history');
                       }}
-                      className='px-4 py-2 hover:bg-zinc-700 cursor-pointer'>Watch History</li>
+                      className='px-4 py-2 hover:bg-zinc-700 cursor-pointer'
+                    >
+                      Watch History
+                    </li>
+                    {isAdmin && (
+                      <li
+                        onClick={() => {
+                          setShowDropdown(false);
+                          navigate('/admin');
+                        }}
+                        className='px-4 py-2 hover:bg-blue-700 text-blue-400 hover:text-white cursor-pointer border-t border-zinc-700'
+                      >
+                        Admin Panel
+                      </li>
+                    )}
                     <li
                       onClick={handleLogout}
                       className='px-4 py-2 hover:bg-red-600 text-red-400 hover:text-white cursor-pointer border-t border-zinc-700'
