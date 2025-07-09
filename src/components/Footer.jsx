@@ -6,9 +6,9 @@ const Footer = () => {
     <footer className='text-center w-full bg-black/70 text-white/50 py-2'>
         <div className='flex item-center justify-center gap-4 mb-1'>
             <Link to="/">About</Link>
-            <Link to="/">Contact</Link>
+            <Link to="/">Q&A</Link>
         </div>
-        <p>What r chu looking at?</p>
+        <p>Contact us for support: nmq2962002@gmail.com</p>
     </footer>
 
   )

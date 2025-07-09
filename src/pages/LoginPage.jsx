@@ -120,7 +120,7 @@ const handleGoogleLogin = async () => {
               fill="#1976D2"
             ></path>
           </svg>
-          Continue with Google
+          Login with Google
         </button>
 
         {/* Terms */}
