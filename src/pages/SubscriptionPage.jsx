@@ -6,18 +6,35 @@ import { useDispatch } from 'react-redux';
 import { setSubscriptionDetails } from '../store/subscriptionSlice';
 
 const SubscriptionPage = () => {
-  const [billingCycle, setBillingCycle] = useState('monthly');
-  const [selectedPlan, setSelectedPlan] = useState('');
-  const [plans, setPlans] = useState([]);
+  const [billingCycle, setBillingCycle] = useState('monthly'); // luu lua chon nguoi dung mac dinh la 'monthly'
+  const [selectedPlan, setSelectedPlan] = useState(''); // luu id cua plan duoc chon
+  const [plans, setPlans] = useState([]); // luu danh sach cac plan lay tu Firestore
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch();// gui du lieu den Redux store
 
+  // lay danh sach cac plan tu Firestore
   useEffect(() => {
-    const fetchPlans = async () => {
+    const fetchPlans = async () => {//lay du lieu cac goi tu Firestore
       try {
-        const querySnapshot = await getDocs(collection(db, 'plans'));
-        const fetchedPlans = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPlans(fetchedPlans);
+        const plansCollection = collection(db, 'plans'); // tro den plans trong Firestore
+        const plansSnapshot = await getDocs(plansCollection); // lay toan bo du lieu trong collection 'plans'
+        const plansData = plansSnapshot.docs.map(doc => ({ // chuyen doi du lieu tu Firestore sang dang object
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPlans(plansData); // cap nhat state plans voi du lieu lay duoc
+        
+        //Lấy dữ liệu từ localStorage nếu có
+        const storedPlanId = localStorage.getItem('selectedPlanId');// Lấy ID của gói đã chọn từ localStorage
+        const storedBillingCycle = localStorage.getItem('billingCycle'); // Lấy chu kỳ đã chọn từ localStorage
+        const storedAmount = localStorage.getItem('amount');
+
+        // Nếu có dữ liệu trong localStorage, cập nhật state tương ứng
+        if (storedPlanId) {
+          setSelectedPlan(storedPlanId); 
+          setBillingCycle(storedBillingCycle || 'monthly');
+        }
+      
       } catch (error) {
         console.error('Error fetching plans:', error);
       }
@@ -26,34 +43,36 @@ const SubscriptionPage = () => {
     fetchPlans();
   }, []);
 
+  // khi click vao goi nao do, luu id cua goi do vao state selectedPlan
   const handlePlanSelect = (planId) => {
     setSelectedPlan(planId);
   };
 
   const handleNext = () => {
-    const selected = plans.find(p => p.id === selectedPlan);
+    const selected = plans.find(p => p.id === selectedPlan); // khi an nut next, tim goi duoc chon
     if (!selected) {
       alert('Please select a valid plan');
       return;
     }
 
+    // Lấy giá trị tương ứng với chu kỳ thanh toán đã chọn
     const amount = billingCycle === 'monthly'
       ? selected.monthlyPrice
       : selected.yearlyPrice;
 
-    // 🔥 Cập nhật Redux store
+    // gui du lieu den Redux de buoc thanh toan biet nguoi dung da chon goi nao, chu ky thanh toan la gi, so tien la bao nhieu
     dispatch(setSubscriptionDetails({
       planId: selected.id,
       billingCycle,
       amount,
     }));
 
-    // ✅ Lưu vào localStorage để chống mất Redux khi reload
+    // Lưu vào localStorage để chống mất Redux khi reload
     localStorage.setItem('selectedPlanId', selected.id);
     localStorage.setItem('billingCycle', billingCycle);
     localStorage.setItem('amount', amount);
 
-    // ✅ Điều hướng sang bước tiếp theo
+    // Điều hướng sang trang chon phương thức thanh toán
     navigate('/payment-methods');
   };
 
@@ -95,7 +114,7 @@ const SubscriptionPage = () => {
 
         {/* Plans */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map(({ id, name, monthlyPrice, yearlyPrice, features }) => (
+          {plans.map(({ id, name, monthlyPrice, yearlyPrice, features, currency}) => (
             <div
               key={id}
               className={`rounded-xl p-6 border-2 transition-all duration-300 cursor-pointer ${selectedPlan === id ? 'border-yellow-500' : 'border-gray-700'} hover:border-yellow-500`}
@@ -104,8 +123,8 @@ const SubscriptionPage = () => {
               <h3 className="text-xl font-bold mb-4">{name}</h3>
               <p className="text-3xl font-extrabold mb-2">
                 {billingCycle === 'monthly'
-                  ? `${(monthlyPrice ?? 0).toLocaleString()}₫`
-                  : `${(yearlyPrice ?? 0).toLocaleString()}₫`}
+                  ? `${(monthlyPrice ?? 0).toLocaleString() }${currency}`
+                  : `${(yearlyPrice ?? 0).toLocaleString()} ${currency}`}
               </p>
               <p className="text-sm mb-4">{billingCycle === 'monthly' ? 'per month' : 'per year'}</p>
               <ul className="text-sm space-y-1 mb-4">

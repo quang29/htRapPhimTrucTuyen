@@ -17,7 +17,7 @@ const plans = [
       subtitle: "For Individual Viewers",
       monthlyPrice: 49000,
       yearlyPrice: 299000, // giảm giá
-      currency: "VND",
+      currency: "$",
       description: "Per user / Month, Billed Annually",
       buttonText: "Start with Basic plan",
       features: [
@@ -42,7 +42,7 @@ const plans = [
       subtitle: "For Families & Small Groups",
       monthlyPrice: 99000,
       yearlyPrice: 499000, // giảm giá
-      currency: "VND",
+      currency: "$",
       description: "Per user / Month, Billed Annually",
       buttonText: "Start with Standard plan",
       features: [
@@ -69,7 +69,7 @@ const plans = [
       subtitle: "For Movie Enthusiasts & Large Families",
       monthlyPrice: 149000,
       yearlyPrice: 699000, // giảm giá
-      currency: "VND",
+      currency: "$",
       description: "Per user / Month, Billed Annually",
       buttonText: "Start with Premium plan",
       features: [

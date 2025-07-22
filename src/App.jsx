@@ -3,7 +3,6 @@ import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import MobileNavigation from './components/MobileNavigation'
-import axios from 'axios'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setBannerData, setImageURL } from './store/movieSlice'
@@ -11,15 +10,14 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from './firebase'
 import { setUser, clearUser } from './store/authSlice'
 import { doc, getDoc } from 'firebase/firestore'
-import { Toaster } from 'react-hot-toast'
 import tmdbAxios from './api/tmdbAxios'
-import { toast } from 'react-hot-toast'; // Thêm nếu chưa có
 
 function App() {
   const location = useLocation()
    console.log('🔍 Pathname:', location.pathname);
   const dispatch = useDispatch()
 
+  // lay du lieu "day trending" cho banner tu tmdb va luu vao redux
   const fetchTrendingData = async () => {
     try {
       const response = await tmdbAxios.get('/trending/all/day')
@@ -31,11 +29,12 @@ function App() {
     }
   }
 
+  // lay cau hinh tu tmdb de luu vao redux
   const fetchConfiguration = async () => {
     try {
       const response = await tmdbAxios.get('/configuration')
 
-      dispatch(setImageURL(response.data.images.secure_base_url + "original"))
+      dispatch(setImageURL(response.data.images.secure_base_url + "original")) // Lưu URL ảnh vào Redux store
     } catch (error) {
       console.error("error", error)
     }
@@ -66,7 +65,7 @@ useEffect(() => {
             uid: user.uid
           }));
         } else {
-          // 🔄 Nếu user chưa có document trong Firestore, tạo mới (tuỳ)
+          //Nếu user chưa có document trong Firestore, tạo mới 
           dispatch(setUser({
             name: user.displayName,
             email: user.email,

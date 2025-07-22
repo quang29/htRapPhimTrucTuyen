@@ -10,20 +10,19 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase'; 
 import { clearUser, showLogin, hideLogin } from '../store/authSlice'; 
 import ViewProfile from './ViewProfile';
-import FavoritesList from './FavoritesList';
 
 const Header = () => {
-    const location = useLocation();
+    const location = useLocation();// lấy đường dẫn hientai
     const navigate = useNavigate();
-    const query = new URLSearchParams(location.search).get('q') || '';
-    const [searchInput, setSearchInput] = useState(query);
-    const showLoginPopup = useSelector((state) => state.auth.showLoginPopup);
+    const query = new URLSearchParams(location.search).get('q') || '';// lây gia tri sau ?q= trong URL, dung cho search
+    const [searchInput, setSearchInput] = useState(query);// chua noi dung trong o tim kiem
+    const showLoginPopup = useSelector((state) => state.auth.showLoginPopup);// lay tu redux xem co dang mo popup login ko
     const [showDropdown, setShowDropdown] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
-    const dropdownRef = useRef(null);
-    const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user)
-    const isAdmin = user?.role === 'admin';
+    const dropdownRef = useRef(null);// dùng để kiểm tra click bên ngoài dropdown
+    const dispatch = useDispatch();// dung de gui action den redux
+    const user = useSelector((state) => state.auth.user)// lay thong tin user tu redux
+    const isAdmin = user?.role === 'admin';// kiem tra xem user co phai admin ko
 
 
     // Khi URL thay đổi (ở /search), đồng bộ input
@@ -33,6 +32,7 @@ const Header = () => {
       }
     }, [location.pathname, location.search]);
 
+    // dong dropdown khi click ra ngoai
     useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -43,14 +43,16 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+    // tranh reload trang khi tim kiem
     const handleSubmit = (e) => {
         e.preventDefault()
     }
 
+    // xu ly dang xuat
     const handleLogout = async () => {
     try {
-      await signOut(auth);
-      dispatch(clearUser());
+      await signOut(auth);// Đăng xuất khỏi Firebase
+      dispatch(clearUser());// Xoá thông tin người dùng trong Redux
       setShowDropdown(false);
       navigate('/');
     } catch (error) {
@@ -58,6 +60,7 @@ const Header = () => {
     }
   }
 
+  // xu ly thay doi input tim kiem
   const handleHeaderInputChange = (e) => {
     const value = e.target.value;
     setSearchInput(value);

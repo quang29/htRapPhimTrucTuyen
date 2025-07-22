@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+// dung de luu du lieu banner va imageURL vao redux, de su dung cho banner/slider trong trang home
 
 const initialState = {
     bannerData : [],

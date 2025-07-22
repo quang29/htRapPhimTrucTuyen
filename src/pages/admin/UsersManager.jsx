@@ -3,20 +3,21 @@ import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
 
 const UsersManager = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]); // danh sach nguoi dung tu firebase
   const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null); // id cua nguoi dung dang duoc cap nhat
   const [message, setMessage] = useState('');
 
+  // lay danh sach nguoi dung tu firebase khi component duoc mount
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
-      const usersSnapshot = await getDocs(collection(db, 'users'));
-      const userList = usersSnapshot.docs.map(doc => ({
+      const usersSnapshot = await getDocs(collection(db, 'users')); // lay toan bo nguoi dung tu collection 'users'
+      const userList = usersSnapshot.docs.map(doc => ({ // chuyen doi tung document thanh object
         id: doc.id,
         ...doc.data(),
       }));
-      setUsers(userList);
+      setUsers(userList); // luu du lieu vao state 
       setLoading(false);
     };
     fetchUsers();
@@ -25,10 +26,10 @@ const UsersManager = () => {
   // Toggle role between user/admin
   const handleToggleRole = async (user) => {
     if (user.role === 'admin') return;
-    setUpdatingId(user.id);
+    setUpdatingId(user.id); // id cua nguoi dung dang duoc cap nhat
     try {
-      await updateDoc(doc(db, 'users', user.id), { role: user.role === 'user' ? 'admin' : 'user' });
-      setUsers(users.map(u => u.id === user.id ? { ...u, role: u.role === 'user' ? 'admin' : 'user' } : u));
+      await updateDoc(doc(db, 'users', user.id), { role: user.role === 'user' ? 'admin' : 'user' });// cap nhat role cua nguoi dung trong firebase
+      setUsers(users.map(u => u.id === user.id ? { ...u, role: u.role === 'user' ? 'admin' : 'user' } : u)); // cap nhat state users de hien thi tren giao dien
       setMessage('Role updated!');
       setTimeout(() => setMessage(''), 2000);
     } catch {
@@ -42,8 +43,8 @@ const UsersManager = () => {
   const handleToggleLock = async (user) => {
     setUpdatingId(user.id);
     try {
-      await updateDoc(doc(db, 'users', user.id), { locked: !user.locked });
-      setUsers(users.map(u => u.id === user.id ? { ...u, locked: !u.locked } : u));
+      await updateDoc(doc(db, 'users', user.id), { locked: !user.locked });// cap nhat trang thai locked cua nguoi dung trong firebase
+      setUsers(users.map(u => u.id === user.id ? { ...u, locked: !u.locked } : u));// cap nhat state users de hien thi tren giao dien
       setMessage(user.locked ? 'User unlocked!' : 'User locked!');
       setTimeout(() => setMessage(''), 2000);
     } catch {

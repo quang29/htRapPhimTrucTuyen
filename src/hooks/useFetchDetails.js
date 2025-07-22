@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from 'axios'
 import tmdbAxios from "../api/tmdbAxios";
-
+// cung nhu useFetch nhung file nay dung de goi du lieu chi tiet cua 1 phim tu tmdb
 const useFetchDetails = (endpoint) => {
     const [data, setData] = useState()
     const [loading, setLoading] = useState(false)
@@ -9,7 +8,7 @@ const useFetchDetails = (endpoint) => {
     const fetchData = async () => {
         try {
             setLoading(true)
-          const response = await tmdbAxios.get(endpoint)
+          const response = await tmdbAxios.get(endpoint)// endpoint la đuôi của url trên tmdb
             setLoading(false)
           setData(response.data)
     

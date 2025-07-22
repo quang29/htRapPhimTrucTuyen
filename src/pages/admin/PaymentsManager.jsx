@@ -3,60 +3,59 @@ import { collection, query, where, getDocs, updateDoc, doc, getDoc } from 'fireb
 import { db } from '../../firebase';
 
 const PaymentsManager = () => {
-  const [payments, setPayments] = useState([]);
+  const [payments, setPayments] = useState([]); // luu tru danh sach cac thanh toan
   const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null); // luu id cua giao dich dang duoc xu ly
   const [message, setMessage] = useState('');
 
-  // Fetch payments and user emails
+  // lay du lieu thanh toan tu firebase
   useEffect(() => {
     const fetchPayments = async () => {
       setLoading(true);
-      // Fetch all plans once for mapping planId -> plan name
-      const plansSnapshot = await getDocs(collection(db, 'plans'));
-      const plansMap = {};
-      plansSnapshot.forEach(planDoc => {
-        plansMap[planDoc.id] = planDoc.data().name || planDoc.id;
+      const plansSnapshot = await getDocs(collection(db, 'plans')); // lay toan bo cac goi tu bang plans
+      const plansMap = {}; // khai bao plansMap de luu tru ten goi theo id
+      plansSnapshot.forEach(planDoc => { // duyet qua tung goi
+        plansMap[planDoc.id] = planDoc.data().name || planDoc.id; // luu ten goi vao plansMap voi key la id cua goi
       });
 
-      const q = query(collection(db, 'payments'), where('status', '==', 'pending'));
-      const querySnapshot = await getDocs(q);
-      const paymentList = [];
-      for (const paymentDoc of querySnapshot.docs) {
-        const paymentData = paymentDoc.data();
-        // Fetch user email
-        let userEmail = '';
+      const q = query(collection(db, 'payments'), where('status', '==', 'pending'));// tao truy van q: lay cac truong trong bang payments co status = pending
+      const querySnapshot = await getDocs(q); // ket qua truy van
+      const paymentList = []; // khoi tao danh sach thanh toan rong
+      for (const paymentDoc of querySnapshot.docs) { // duyet qua tung tai lieu trong ket qua truy van
+        const paymentData = paymentDoc.data(); // lay du lieu thanh toan tu tai lieu
+        let userEmail = ''; // khoi tao userEmail rong
         try {
-          const userDoc = await getDoc(doc(db, 'users', paymentData.userId));
-          if (userDoc.exists()) {
-            userEmail = userDoc.data().email;
+          const userDoc = await getDoc(doc(db, 'users', paymentData.userId)); // lay tai lieu nguoi dung tu bang users theo userId
+          if (userDoc.exists()) { // neu tai lieu nguoi dung ton tai
+            userEmail = userDoc.data().email; // lay email cua nguoi dung
           }
         } catch {}
-        paymentList.push({
+        paymentList.push({ // gop lai du lieu tung giao dich, tao 1 doi tuong chua id, useremail, planName, va cac truong khac
           id: paymentDoc.id,
           ...paymentData,
           userEmail,
           planName: plansMap[paymentData.planId] || paymentData.planId,
         });
       }
-      setPayments(paymentList);
+      setPayments(paymentList); // cap nhat state payments voi danh sach cac giao dich thanh toan
       setLoading(false);
     };
     fetchPayments();
   }, []);
 
+  // ham xu ly cap nhat trang thai thanh toan
   const handleUpdateStatus = async (id, status) => {
-    setUpdatingId(id);
+    setUpdatingId(id); // luu id cua giao dich dang duoc cap nhat
     try {
-      await updateDoc(doc(db, 'payments', id), { status, updatedAt: new Date() });
-      setPayments(payments.filter(p => p.id !== id));
-      setMessage(`Payment ${status === 'success' ? 'approved' : 'rejected'} successfully!`);
-      setTimeout(() => setMessage(''), 2000);
+      await updateDoc(doc(db, 'payments', id), { status, updatedAt: new Date() }); // cap nhat trang thai giao dich thanh toan trong bang payments
+      setPayments(payments.filter(p => p.id !== id)); // loai bo giao dich da cap nhat khoi danh sach payments
+      setMessage(`Payment ${status === 'success' ? 'approved' : 'rejected'} successfully!`); // hien thi thong bao thanh cong
+      setTimeout(() => setMessage(''), 2000); // xoa thong bao sau 2 giay
     } catch (error) {
       setMessage('Error updating payment status.');
       setTimeout(() => setMessage(''), 2000);
     }
-    setUpdatingId(null);
+    setUpdatingId(null); // reset id dang cap nhat de hien thi lai nut cho cac dong khac
   };
 
   return (

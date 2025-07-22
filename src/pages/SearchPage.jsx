@@ -7,15 +7,15 @@ import { Switch } from '@headlessui/react';
 import { toast } from 'react-hot-toast';
 
 const SearchPage = () => {
-  const location = useLocation();
+  const location = useLocation(); // Lấy đường dẫn hiện tại
   const navigate = useNavigate();
 
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [useAISearch, setUseAISearch] = useState(false);
+  const [data, setData] = useState([]); // ket qua phim hien thi khi tim kiem
+  const [page, setPage] = useState(1); // so trang hien tai
+  const [totalPages, setTotalPages] = useState(1); // tong so trang ket qua tim kiem
+  const [useAISearch, setUseAISearch] = useState(false); // khi bat tim kiem bang AI thi true
   const [loading, setLoading] = useState(false);
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef(null); // cooldown 5 giay cho AI search
 
   // Lấy query từ URL, nếu không có thì là chuỗi rỗng
   const params = new URLSearchParams(location.search);
@@ -24,15 +24,15 @@ const SearchPage = () => {
   // Normal search
   const fetchData = async () => {
     try {
-      const response = await tmdbAxios.get(`search/multi`, {
+      const response = await tmdbAxios.get(`search/multi`, { // goi tmdb API
         params: {
           query: query,
           page: page,
         },
       });
 
-      setData((prev) => page === 1 ? response.data.results : [...prev, ...response.data.results]);
-      setTotalPages(response.data.total_pages || 1);
+      setData((prev) => page === 1 ? response.data.results : [...prev, ...response.data.results]); // nếu là trang 1 thì set lại data, nếu không thì nối thêm kết quả mới
+      setTotalPages(response.data.total_pages || 1); // nếu không có total_pages thì mặc định là 1
     } catch (error) {
       console.log('❌ Error fetching search results:', error);
     }
@@ -42,15 +42,15 @@ const SearchPage = () => {
   const fetchAIData = async () => {
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3001/api/ai-search', { query });
-      if (res.data.keywords && res.data.keywords.length > 0) {
-        const tmdbRes = await tmdbAxios.get('search/multi', {
+      const res = await axios.post('http://localhost:3001/api/ai-search', { query }); // gui query sang ai-search 
+      if (res.data.keywords && res.data.keywords.length > 0) { // nhan lai keywords tu AI, lay tu khoa dau tien
+        const tmdbRes = await tmdbAxios.get('search/multi', { // goi tmdb API de tim phim voi tu khoa do
           params: {
             query: res.data.keywords[0],
             page: 1,
           },
         });
-        setData(tmdbRes.data.results);
+        setData(tmdbRes.data.results);// luu ket qua vao state
         setTotalPages(tmdbRes.data.total_pages || 1);
       } else {
         setData([]);
@@ -66,10 +66,10 @@ const SearchPage = () => {
   // Handle search when query or AI toggle changes
   useEffect(() => {
     setPage(1);
-    setData([]);
+    setData([]); // reset data when query changes
     if (!query) return;
 
-    if (useAISearch) {
+    if (useAISearch) { // doi 5 giay truoc khi goi AI search
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         fetchAIData();
@@ -77,7 +77,6 @@ const SearchPage = () => {
     } else {
       fetchData();
     }
-
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
@@ -90,21 +89,21 @@ const SearchPage = () => {
     }
   }, [page]);
 
-  // Infinite scroll
+  // Infinite scroll chi danh cho tim kiem thuong
   useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop + 100 >=
         document.documentElement.offsetHeight
       ) {
-        if (page < totalPages && !loading && !useAISearch) {
+        if (page < totalPages && !loading && !useAISearch) { // chỉ load thêm khi không dùng AI search, chua toi trang cuoi va khong dang loading
           setPage((prev) => prev + 1);
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);// Thêm sự kiện scroll để load thêm dữ liệu khi cuộn xuống
+    return () => window.removeEventListener('scroll', handleScroll);// Xoá sự kiện khi component unmount
   }, [page, totalPages, loading, useAISearch]);
 
   return (
@@ -135,6 +134,7 @@ const SearchPage = () => {
           </span>
         )}
       </div>
+      {/* thanh tim kiem cho mobile */}
       <div className='lg:hidden my-2 px-3 sticky top-[70px] z-30'>
         <input
           type='text'

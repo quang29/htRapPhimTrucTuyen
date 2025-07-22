@@ -6,26 +6,27 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 const WatchHistory = () => {
-  const user = useSelector((state) => state.auth.user);
-  const [history, setHistory] = useState([]);
+  const user = useSelector((state) => state.auth.user);// lay thong tin nguoi dung tu redux store
+  const [history, setHistory] = useState([]);// lay danh sach lich su xem phim
   const [loading, setLoading] = useState(true);
 
+  // Fetch watch history from Firestore
   useEffect(() => {
     const fetchHistory = async () => {
       if (!user) {
         setLoading(false);
         return;
       }
-      try {
-        const historyRef = collection(db, 'users', user.uid, 'watchHistory');
-        const snapshot = await getDocs(historyRef);
-        const data = snapshot.docs.map(doc => ({
+      try { 
+        const historyRef = collection(db, 'users', user.uid, 'watchHistory');// Truy cập vào collection watchHistory
+        const snapshot = await getDocs(historyRef);// lay cac phim da xem
+        const data = snapshot.docs.map(doc => ({ // Chuyen doi du lieu nhan ve tu Firestore sang dang object
           id: doc.id,
           ...doc.data()
         }));
         // Sắp xếp mới nhất lên đầu
         const sorted = data.sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt));
-        setHistory(sorted);
+        setHistory(sorted);// Luu danh sach lich su vao state
       } catch (err) {
         console.error("Failed to fetch history:", err);
       }
@@ -39,7 +40,7 @@ const WatchHistory = () => {
 
   return (
     <div className="container mt-10 pt-10 mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold text-white mb-6">📺 Watch History</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">Watch History</h2>
 
       {history.length === 0 ? (
         <p className="text-white">You haven't watched any movies yet.</p>

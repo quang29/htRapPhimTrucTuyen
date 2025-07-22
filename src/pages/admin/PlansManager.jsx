@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
 
+// khai bao new form mac dinh
 const emptyPlan = {
   name: '',
   subtitle: '',
@@ -17,69 +18,72 @@ const emptyPlan = {
 };
 
 const PlansManager = () => {
-  const [plans, setPlans] = useState([]);
+  const [plans, setPlans] = useState([]); // danh sach cac plan
   const [loading, setLoading] = useState(true);
-  const [editingPlan, setEditingPlan] = useState(null);
-  const [form, setForm] = useState(emptyPlan);
+  const [editingPlan, setEditingPlan] = useState(null); // plan dang duoc chinh sua
+  const [form, setForm] = useState(emptyPlan); // du lieu form đang nhập
   const [message, setMessage] = useState('');
 
+  // tai du lieu cac plan tu firebase khi component mount
   useEffect(() => {
     fetchPlans();
   }, []);
 
+  // lay danh sach cac plan tu firebase
   const fetchPlans = async () => {
     setLoading(true);
-    const plansSnapshot = await getDocs(collection(db, 'plans'));
-    const planList = plansSnapshot.docs.map(doc => ({
+    const plansSnapshot = await getDocs(collection(db, 'plans')); // lấy tất cả các tài liệu trong collection 'plans'
+    const planList = plansSnapshot.docs.map(doc => ({ // chuyển đổi mỗi tài liệu thành đối tượng với id và dữ liệu(firebase tra ve du lieu dang dạng DocumentSnapshot)
       id: doc.id,
       ...doc.data(),
     }));
-    setPlans(planList);
+    setPlans(planList);// cập nhật state với danh sách các plan
     setLoading(false);
   };
 
-  const handleEdit = (plan) => {
-    setEditingPlan(plan.id);
-    setForm({ ...plan, features: plan.features || [] });
+  const handleEdit = (plan) => { // khi click nút sửa, đặt form với dữ liệu của plan hiện tại
+    setEditingPlan(plan.id); // lưu id của plan đang chỉnh sửa
+    setForm({ ...plan, features: plan.features || [] }); // sao chép dữ liệu của plan vào form, đảm bảo features là mảng
   };
 
-  const handleDelete = async (planId) => {
+  const handleDelete = async (planId) => { // khi click nút xóa, xác nhận và xóa plan
     if (!window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) return;
-    await deleteDoc(doc(db, 'plans', planId));
+    await deleteDoc(doc(db, 'plans', planId)); // xóa plan khỏi Firestore
     setMessage('Plan deleted!');
     fetchPlans();
     setTimeout(() => setMessage(''), 2000);
   };
 
+  // xử lý thay đổi dữ liệu trong form
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
-      setForm({ ...form, [name]: checked });
-    } else {
-      setForm({ ...form, [name]: value });
+    const { name, value, type, checked } = e.target; // lấy tên, giá trị, kiểu và trạng thái của input
+    if (type === 'checkbox') { // nếu là checkbox, cập nhật giá trị boolean
+      setForm({ ...form, [name]: checked }); // cập nhật giá trị của checkbox
+    } else { // nếu là input thông thường, cập nhật giá trị chuỗi
+      setForm({ ...form, [name]: value }); // cập nhật giá trị của input thông thường
     }
   };
 
   const handleFeaturesChange = (e) => {
-    setForm({ ...form, features: e.target.value.split('\n').filter(Boolean) });
+    setForm({ ...form, features: e.target.value.split('\n').filter(Boolean) });// cập nhật mảng features từ textarea, mỗi dòng là một feature
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { // khi submit form, kiểm tra dữ liệu và thêm hoặc cập nhật plan
     e.preventDefault();
-    if (!form.name.trim()) {
+    if (!form.name.trim()) { // kiểm tra nếu tên plan rỗng
       setMessage('Plan name is required!');
       return;
     }
-    if (form.monthlyPrice <= 0 && form.yearlyPrice <= 0) {
+    if (form.monthlyPrice <= 0 && form.yearlyPrice <= 0) { // kiểm tra nếu cả hai giá đều <= 0
       setMessage('At least one price must be greater than 0!');
       return;
     }
     // ...các validate khác...
-    if (editingPlan) {
-      await updateDoc(doc(db, 'plans', editingPlan), form);
+    if (editingPlan) { // nếu đang chỉnh sửa plan, cập nhật nó
+      await updateDoc(doc(db, 'plans', editingPlan), form); // cập nhật plan trong Firestore
       setMessage('Plan updated!');
-    } else {
-      await addDoc(collection(db, 'plans'), form);
+    } else { // nếu không, thêm plan mới
+      await addDoc(collection(db, 'plans'), form); // thêm plan mới vào Firestore
       setMessage('Plan added!');
     }
     setEditingPlan(null);
@@ -88,9 +92,9 @@ const PlansManager = () => {
     setTimeout(() => setMessage(''), 2000);
   };
 
-  const handleCancel = () => {
-    setEditingPlan(null);
-    setForm(emptyPlan);
+  const handleCancel = () => { // khi click nút hủy, đặt lại form và xóa plan đang chỉnh sửa
+    setEditingPlan(null); // xóa id của plan đang chỉnh sửa
+    setForm(emptyPlan); // đặt lại form về giá trị mặc định
   };
 
   return (

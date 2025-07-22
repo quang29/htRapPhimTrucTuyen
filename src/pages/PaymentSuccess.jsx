@@ -4,30 +4,31 @@ import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const PaymentSuccess = () => {
-  const location = useLocation();
+  const location = useLocation(); //de lay thong tin tu url
   const navigate = useNavigate();
-  const [paymentInfo, setPaymentInfo] = useState(null);
+  const [paymentInfo, setPaymentInfo] = useState(null); // luu trang thai, ma giao dich va so tien
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const status = queryParams.get("vnp_ResponseCode");
-    const txnRef = queryParams.get("vnp_TxnRef");
-    const amount = queryParams.get("vnp_Amount");
+    const queryParams = new URLSearchParams(location.search); // Lấy các tham số từ URL(urlsearchparams giup lay thong tin sau dau ?)
+    const status = queryParams.get("vnp_ResponseCode"); // Lấy mã phản hồi từ VNPay
+    const txnRef = queryParams.get("vnp_TxnRef"); // Lấy mã giao dịch từ VNPay
+    const amount = queryParams.get("vnp_Amount"); // Lấy số tiền từ VNPay
 
-    setPaymentInfo({
+    setPaymentInfo({ // sau do luu vao setpaymentInfo
       status,
       txnRef,
       amount,
     });
   }, [location]);
 
+  // Lưu thông tin vào Firestore khi thanht toan thanh cong
   useEffect(() => {
-    if (paymentInfo && paymentInfo.status === "00" && paymentInfo.txnRef) {
-      setDoc(doc(db, "payments", paymentInfo.txnRef), {
+    if (paymentInfo && paymentInfo.status === "00" && paymentInfo.txnRef) { // neu status la 00 va co ma giao dich
+      setDoc(doc(db, "payments", paymentInfo.txnRef), { // Luu thong tin giao dich vao Firestore
         status: "success",
         vnp_ResponseCode: paymentInfo.status,
         updatedAt: new Date()
-      }, { merge: true });
+      }, { merge: true }); // merge true giu lai cac truong cu
     }
   }, [paymentInfo]);
 
@@ -37,6 +38,7 @@ const PaymentSuccess = () => {
     </div>
   );
 
+  // Kiem tra trang thai thanh toan
   const isSuccess = paymentInfo.status === "00";
 
   return (
@@ -70,18 +72,19 @@ const PaymentSuccess = () => {
           </div>
           <div className="flex justify-between">
             <span className="font-semibold">Amount:</span>
-            <span>{(Number(paymentInfo.amount) / 100).toLocaleString()} VND</span>
+            <span>{(Number(paymentInfo.amount) / 100).toLocaleString()} VND</span> 
+            {/* // vi vnpay tra ve thua 100 nen Chia cho 100 de chuyen doi sang VND */}
           </div>
         </div>
         <button
-          onClick={() => navigate(isSuccess ? "/subscription" : "/")}
+          onClick={() => navigate(isSuccess ? "/" : "/subscription")}
           className={`w-full py-2 rounded-lg font-bold transition 
             ${isSuccess
               ? "bg-gradient-to-tr from-green-400 to-green-600 text-black hover:scale-105"
               : "bg-gradient-to-tr from-red-400 to-red-600 text-white hover:scale-105"
             }`}
         >
-          {isSuccess ? "Go to Subscription" : "Back to Home"}
+          {isSuccess ? "Back to Home" : "Go to Subscription"}
         </button>
       </div>
     </div>

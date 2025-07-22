@@ -2,8 +2,8 @@ import React from 'react'
 import { FaDoorClosed } from "react-icons/fa";
 import useFetchDetails from '../hooks/useFetchDetails'
 
-const Videoplay = ({data, close, media_type}) => {
-  const { data : videoData } = useFetchDetails(`/${media_type}/${data?.id}}/videos`)
+const Videoplay = ({data, close, media_type}) => { // nhan cac props tu component cha do la DetailsPage.jsx
+  const { data : videoData } = useFetchDetails(`/${media_type}/${data?.id}/videos`) // goi hook useFetchDetails de lay du lieu video tu API
   return (
     <section className='fixed bg-black top-0 right-0 left-0 bottom-0 z-50 flex items-center justify-center'>
       <div className='bg-black w-full max-h-[80vh] max-w-screen-lg aspect-video rounded relative'>

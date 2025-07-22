@@ -1,55 +1,59 @@
 import React from 'react'
-import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import Card from '../components/Card'
 import tmdbAxios from '../api/tmdbAxios'
 
 const ExplorePage = () => {
-  const params = useParams()
+  const params = useParams()// lay cac tham so nhu explore va id tu url
   console.log("params", params.explore)
-  const [pageNo, setPageNo] = useState(1)
-  const [data, setData] = useState([])
-  const [totalPages, setTotalPages] = useState(0)
+  const [pageNo, setPageNo] = useState(1)// so trang hien tai
+  const [data, setData] = useState([]) // mang chua danh sach phim da goi
+  const [totalPages, setTotalPages] = useState(0) // tong so trang ma API tra ve
 
+  // Ham fetchData de goi API va lay du lieu
   const fetchData = async () => {
     try {
-      const response = await tmdbAxios.get(`/discover/${params.explore}`, {
+      const response = await tmdbAxios.get(`/discover/${params.explore}`, { // /discover/movie or /tv 
         params: {
           page: pageNo
         }
       })
-      setData((prev)=>{
+      setData((prev)=>{ // noi them du lieu moi vao mang data cu(dung khi load them trang)
         return [
           ...prev, 
           ...response.data.results
         ]
       })
-      setTotalPages(response.data.total_pages)
+      setTotalPages(response.data.total_pages) // luu tong so trang de biet khi nao dung scroll
     } catch (error) {
       console.log(error)
     }
   }
 
+  // goi them du lieu khi cuon den cuoi trang
   const handleScroll = () => {
-    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return
+    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return // kiem tra neu da den cuoi trang chua
     if (pageNo < totalPages) {
-      setPageNo((prev) => prev + 1)
+      setPageNo((prev) => prev + 1) // neu chua den trang cuoi cung, tang pageNo len 1 de goi API tiep
     }
   }
 
+  // khi pageno thay doi, load them trang
   useEffect(() => {
-    if (params.explore === 'favorites') return;
+    // if (params.explore === 'favorites') return;
     fetchData()
   }, [pageNo])
 
+  // khi chuyen tu explore/tv sang explore/movie hoac nguoc lai, reset trang ve 1 va xoa data cu
   useEffect(() => {
-    if (params.explore === 'favorites') return;
+    // if (params.explore === 'favorites') return;
     setPageNo(1)
     setData([])
     fetchData() 
   }, [params.explore])
 
+  // lang nghe su kien cuon trang, neu den cuoi trang thi goi handleScroll
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => {

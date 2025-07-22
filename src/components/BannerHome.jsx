@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { data } from 'react-router-dom'
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { Link } from 'react-router-dom'
-
+// du lieu bannerData va imageURL se duoc lay tu redux store va lay du lieu tu tmdb o trang app.jsx
 const BannerHome = () => {
-    const bannerData = useSelector(state => state.movieData.bannerData)
+    const bannerData = useSelector(state => state.movieData.bannerData)// lay du lieu bannerData tu redux store
     const imageURL = useSelector(state => state.movieData.imageURL)
-    const [currentImage, setCurrentImage] = useState(2)
+    const [currentImage, setCurrentImage] = useState(2)//anh dang hien thi la so 3
 
+    // ham chuyen tiep hinh anh
     const handleNext = () => {
         if(currentImage < bannerData.length - 1) {
             setCurrentImage(currentImage + 1)
         }
     }
 
+    // ham quay lai hinh anh
     const handlePrevious = () => {
         if(currentImage > 0) {
             setCurrentImage(currentImage - 1)
         }
     }
 
+    // tu dong chuyen tiep hinh anh sau 5 giay
     useEffect(() => {
         const interval = setInterval(() => {
             if(currentImage < bannerData.length - 1) {

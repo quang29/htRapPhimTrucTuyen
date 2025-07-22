@@ -1,14 +1,11 @@
 import React from 'react'
 import BannerHome from '../components/BannerHome'
 import { useSelector } from 'react-redux'
-import Card from '../components/Card'
 import HorizontalScroll from '../components/HorizontalScroll'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
 import useFetch from '../hooks/useFetch'
 
 const Home = () => {
-  const trendingData = useSelector(state => state.movieData.bannerData)
+  const trendingData = useSelector(state => state.movieData.bannerData) // lay du lieu phim dang trending tu redux store
   const { data : nowPlayingData } = useFetch('/movie/now_playing')
   const { data : topRatedData } = useFetch('/movie/top_rated')
   const { data : popularTvShowData } = useFetch('/tv/popular')

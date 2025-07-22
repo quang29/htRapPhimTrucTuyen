@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { setPaymentMethod } from '../store/paymentSlice';
 
 const PaymentMethodsPage = () => {
-  const [selectedMethod, setSelectedMethod] = useState(null);
-  const dispatch = useDispatch();
+  const [selectedMethod, setSelectedMethod] = useState(null); // Lưu phương thức thanh toán đã chọn
+  const dispatch = useDispatch(); // Gửi dữ liệu đến Redux store
   const navigate = useNavigate();
 
   const paymentMethods = [
@@ -14,13 +14,14 @@ const PaymentMethodsPage = () => {
     { id: 'vnpay', name: 'VNPay', icon: '💳', description: 'Pay using VNPay gateway' },
   ];
 
+  // xu ly khi an nut next
   const handleNext = () => {
     if (!selectedMethod) {
       alert('Please select a payment method');
       return;
     }
-    dispatch(setPaymentMethod(selectedMethod));
-    localStorage.setItem('paymentMethod', selectedMethod);
+    dispatch(setPaymentMethod(selectedMethod)); // gui phương thức thanh toán đã chọn đến Redux
+    localStorage.setItem('paymentMethod', selectedMethod); // Lưu phương thức thanh toán vào localStorage de ko mat khi load lai
     navigate('/payment-qr-code');
   };
 

@@ -3,15 +3,14 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { GENRE_MAP } from '../constants/genreMap'
 
-const Card = ({data,trending,index,media_type}) => {
-    const imageURL = useSelector(state => state.movieData.imageURL)
-    const mediaType = data.media_type ?? media_type ?? "movie"
+const Card = ({data,trending,index,media_type}) => { // nhan cac props tu component cha do la Home.jsx, HorizontalScroll.jsx
+    const imageURL = useSelector(state => state.movieData.imageURL) // lay URL anh tu redux store(duoc fetch o App.jsx)
+    const mediaType = data.media_type ?? media_type ?? "movie" // lay media_type tu data, neu khong co thi lay tu props media_type, neu khong co thi mac dinh la "movie"
     const title = data?.title || data?.name || data?.original_title || data?.original_name || "Untitled";
 
-     // Lấy thể loại từ genre_ids nếu có
     const typeLabel = mediaType === "movie" ? "Movie" : "TV Show"
-    const genreNames = (data.genre_ids || []).map(id => GENRE_MAP[id]).filter(Boolean)
-    const genreText = genreNames.slice(0, 2).join(", ") || (mediaType === "movie" ? "Movie" : "TV Show")
+    const genreNames = (data.genre_ids || []).map(id => GENRE_MAP[id]).filter(Boolean)// chuyen doi id the loai sang ten the loai
+    const genreText = genreNames.slice(0, 2).join(", ") || (mediaType === "movie" ? "Movie" : "TV Show") // lay 2 the loai dau tien, neu khong co the loai nao thi hien thi "Movie" hoac "TV Show" tuong ung voi mediaType
 
   return (
     <Link to={`/${mediaType}/${data.id}`} className='w-full min-w-[230px] max-w-[230px] h-80 overflow-hidden block rounded relative hover:scale-110 transition-transform duration-300 ease-in-out group'>

@@ -8,8 +8,8 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, provider, db } from "../firebase";
 import { toast } from 'react-hot-toast'; // Thêm nếu chưa có
 
-const LoginPage = ({ onClose }) => {
-    const dispatch = useDispatch();
+const LoginPage = ({ onClose }) => { // props duoc truyen tu cha la header.jsx
+    const dispatch = useDispatch(); // Redux dispatch to set user state
     // Disable scroll when popup is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -19,33 +19,34 @@ const LoginPage = ({ onClose }) => {
   }, []);
 
 
+  // Hàm xử lý đăng nhập với Google
 const handleGoogleLogin = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    const userInfo = {
+    const userInfo = { // tao objec userInfo de luu thong tin nguoi dung
       uid: user.uid,
       email: user.email,
       name: user.displayName,
       photo: user.photoURL,
     };
 
-    // Lưu vào Firestore nếu chưa có
-    const userRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userRef);
+    const userRef = doc(db, "users", user.uid);// Tạo tham chiếu đến document người dùng
+    const docSnap = await getDoc(userRef);// Lấy dữ liệu người dùng từ Firestore
 
-    if (!docSnap.exists()) {
-      await setDoc(userRef, {
+    if (!docSnap.exists()) { // Nếu người dùng chưa tồn tại trong Firestore
+      await setDoc(userRef, { // Tạo mới người dùng trong Firestore
         ...userInfo,
         createdAt: new Date().toISOString(),
         role: "user",
         locked: false, // Mặc định không bị khoá
       });
-      dispatch(setUser({ ...userInfo, role: "user", locked: false }));
+      dispatch(setUser({ ...userInfo, role: "user", locked: false })); // luu người dùng vào Redux
       onClose();
       return;
     }
 
+    // Nếu người dùng đã tồn tại, kiểm tra trạng thái khoá
     const userData = docSnap.data();
     if (userData.locked) {
       toast.error("Your account has been locked. Please contact support.");
@@ -54,8 +55,9 @@ const handleGoogleLogin = async () => {
       return;
     }
 
-    dispatch(setUser({ ...userData, uid: user.uid }));
-    onClose();
+    dispatch(setUser({ ...userData, uid: user.uid })); // Lưu thông tin người dùng vào Redux nếu hợp lệ
+    onClose();// Dong popup
+    toast.success("Login successful!");
   } catch (error) {
     toast.error("Login failed. Please try again.");
     console.error("Login error:", error);

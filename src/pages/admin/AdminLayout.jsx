@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { HiMenu } from 'react-icons/hi';
+//trang layout chung cho admin
 
 const adminLinks = [
   { to: '/admin', label: 'Statistics' },
@@ -10,7 +11,7 @@ const adminLinks = [
 ];
 
 const AdminLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // kiem soat menu mobile co mo hay khong
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-black to-zinc-800 flex flex-col md:flex-row mt-10">
@@ -31,6 +32,7 @@ const AdminLayout = () => {
             <NavLink
               key={link.to}
               to={link.to}
+              end
               className={({ isActive }) =>
                 `px-4 py-2 rounded-lg transition font-medium ${
                   isActive

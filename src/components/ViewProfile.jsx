@@ -5,14 +5,15 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { setUser } from '../store/authSlice';
 
-const ViewProfile = ({ onClose }) => {
-  const user = useSelector((state) => state.auth.user);
-  const dispatch = useDispatch();
+const ViewProfile = ({ onClose }) => { // lay props tu Header.jsx
+  const user = useSelector((state) => state.auth.user); // lay thong tin user tu redux
+  const dispatch = useDispatch();  // dung de gui action den redux
 
-  const [name, setName] = useState(user?.name || '');
-  const [photoFile, setPhotoFile] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [name, setName] = useState(user?.name || '');// ten nguoi dung mac dinh la ten trong redux
+  const [photoFile, setPhotoFile] = useState(null); // luu tru file anh dai dien
+  const [isSaving, setIsSaving] = useState(false);  // trang thai luu thong tin
 
+  // Handle file selection
   const handleFileChange = (e) => {
     setPhotoFile(e.target.files[0]);
   };

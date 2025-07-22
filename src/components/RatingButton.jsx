@@ -5,33 +5,35 @@ import { db } from "../firebase";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
-export default function RatingButton({ movieId }) {
-  const user = useSelector((state) => state.auth.user);
-  const [rating, setRating] = useState(null);
-  const [showTooltip, setShowTooltip] = useState(false);
+export default function RatingButton({ movieId }) { // Nhận movieId từ props cua component cha la detailspage
+  const user = useSelector((state) => state.auth.user); // Lấy thông tin người dùng từ Redux store
+  const [rating, setRating] = useState(null); // trang thai like/dislike
+  const [showTooltip, setShowTooltip] = useState(false); // Hiển thị tooltip khi hover
 
   // Reset rating mỗi khi movieId thay đổi
   useEffect(() => {
     setRating(null);
   }, [movieId]);
 
+  //lay du lieu rating tu firebase
   useEffect(() => {
     if (!user) return;
     const fetchRating = async () => {
-      const ref = doc(db, "users", user.uid, "ratings", movieId.toString());
+      const ref = doc(db, "users", user.uid, "ratings", movieId.toString()); 
       const snap = await getDoc(ref);
-      if (snap.exists()) setRating(snap.data().type);
+      if (snap.exists()) setRating(snap.data().type);// Lấy loại đánh giá (like/dislike) từ dữ liệu
     };
     fetchRating();
   }, [user, movieId]);
 
+  // Xử lý sự kiện khi người dùng click vào nút đánh giá
   const handleRate = async (type) => {
     if (!user) {
       toast.error("Please log in to rate this movie!");
       return;
     }
-    const ref = doc(db, "users", user.uid, "ratings", movieId.toString());
-
+    const ref = doc(db, "users", user.uid, "ratings", movieId.toString()); // tro toi document rating cua user
+    // Nếu đã đánh giá rồi, xóa đánh giá; nếu chưa thì thêm đánh giá mới
     if (rating === type) {
       await deleteDoc(ref);
       setRating(null);
@@ -52,6 +54,7 @@ export default function RatingButton({ movieId }) {
     return "";
   };
 
+   // Trả về biểu tượng chính (like/dislike) dựa trên trạng thái rating hiện tại.
   const getMainIcon = () => {
     if (rating === "dislike") return <FaThumbsDown />;
     return <FaThumbsUp />;

@@ -6,23 +6,27 @@ import { useNavigate } from 'react-router-dom';
 
 const PaymentQRCode = () => {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // dung de biet dang gui yeu cau hay chua
 
+  // lấy thông tin từ Redux store(goi da chọn, phuong thuc thanh toan, id nguoi dung)
   const reduxState = useSelector((state) => state.subscription);
   const reduxMethod = useSelector((state) => state.payment.paymentMethod);
   const userId = useSelector((state) => state.auth.user?.uid);
 
+  // lay lại thông tin từ localStorage nếu không có trong Redux vì reload
   const selectedPlanId = reduxState.selectedPlanId || localStorage.getItem('selectedPlanId');
   const billingCycle = reduxState.billingCycle || localStorage.getItem('billingCycle');
   const amount = reduxState.amount || parseInt(localStorage.getItem('amount')) || 0;
   const paymentMethod = reduxMethod || localStorage.getItem('paymentMethod');
 
+  // tao url anh qr tu vietqr api
   const QRImage =
     'https://api.vietqr.io/image/970422-0465179699999-NGUYENMINHQUANG.png?amount=' +
     amount +
     '&addInfo=MoviePlan_' +
     selectedPlanId;
 
+  // khi an nut da thanh toan, luu vao Firestore
   const handleConfirmPayment = async () => {
     try {
       setIsSubmitting(true);
@@ -35,7 +39,7 @@ const PaymentQRCode = () => {
         status: 'pending',
         timestamp: serverTimestamp(),
       });
-      localStorage.setItem('paymentId', docRef.id);
+      localStorage.setItem('paymentId', docRef.id); // Lưu ID thanh toán vào localStorage để sử dụng sau này
       alert('Thank you! We’ll verify your payment soon.');
       navigate('/');
     } catch (error) {
@@ -46,10 +50,11 @@ const PaymentQRCode = () => {
     }
   };
 
+  // vnpay payment handler
 const handleVNPayPayment = async () => {
   try {
-    const orderId = `movieplan_${Date.now()}`;
-await setDoc(doc(db, "payments", orderId), {
+    const orderId = `movieplan_${Date.now()}`;//tao orderid theo thoi gian hien tai
+await setDoc(doc(db, "payments", orderId), { // Lưu don hang vào Firestore
   userId,
   planId: selectedPlanId,
   billingCycle,
@@ -59,7 +64,7 @@ await setDoc(doc(db, "payments", orderId), {
   timestamp: serverTimestamp(),
 });
 
-// Gửi request tới backend:
+// Gửi request tới backend nodejs goi /create-payment để tạo link thanh toán VNPay
 const response = await fetch("http://localhost:3001/create-payment", {
   method: "POST",
   headers: {
@@ -67,14 +72,15 @@ const response = await fetch("http://localhost:3001/create-payment", {
   },
   body: JSON.stringify({
     amount,
-    orderId, // 👈 Bây giờ ID đã khớp với Firestore
+    orderId, 
     userId: userId || "guest",
   }),
 });
 
-    const data = await response.json();
+    const data = await response.json(); // nhan link vnpay từ backend
     if (data.url) {
-      localStorage.setItem('paymentId', orderId);
+      localStorage.setItem('paymentId', orderId); // Lưu ID thanh toán vào localStorage 
+      // Chuyển hướng người dùng tới VNPay khi ấn nút
       window.location.href = data.url;
     } else {
       alert('Could not create VNPay payment. Please try again.');

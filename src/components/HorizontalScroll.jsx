@@ -2,9 +2,11 @@ import React from 'react'
 import Card from './Card'
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useRef } from 'react'
+// lay du lieu phim tu redux store, trang home truy van du lieu tu tmdb
 
+// cac props truyen vao tu cha Home.jsx
 const HorizontalScroll = ({data = [], heading, trending, media_type}) => {
-    const containerRef = useRef(null)
+    const containerRef = useRef(null) // dung de cuon danh sach phim theo chieu ngang
 
 
   return (
